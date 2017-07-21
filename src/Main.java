@@ -4,17 +4,10 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.Key;
 
 public class Main {
 
     final static int PORT = 9980;
-    final static String INET_ADDR = "224.1.1.1";
-    final static int TIMEOUT = 3000; // milliseconds
-    final static int BUF_SIZE = 256;
-
 
     final String ESC = "escape";
     final String ENTER = "enter";
@@ -48,7 +41,8 @@ public class Main {
             serverSocket.receive(receivePacket);
 
             String input = new String(receivePacket.getData(), 0, receivePacket.getLength());
-            System.out.printf("%s len:%d%n", input, input.length());
+            System.out.println(input);
+
             mainLoop:
             for (int i = 0; i < input.length(); i++) {
                 boolean capital = false;
@@ -88,7 +82,6 @@ public class Main {
                                         break;
                                     case SHIFT:
                                         capital = true;
-                                        System.out.println("CH "+actions[1].charAt(0));
                                         code = KeyEvent.getExtendedKeyCodeForChar(actions[1].charAt(0));
                                         break;
                                     default: {
@@ -135,6 +128,7 @@ public class Main {
                     }
                     code = KeyEvent.getExtendedKeyCodeForChar(ch);
                 }
+
                 if (capital)
                     robot.keyPress(KeyEvent.VK_SHIFT);
 
@@ -143,35 +137,6 @@ public class Main {
                 robot.keyRelease(code);
                 robot.keyRelease(KeyEvent.VK_SHIFT);
             }
-        }
-    }
-
-    public static void setupMulticast() throws UnknownHostException {
-        // Get the address that we are going to connect to.
-        InetAddress addr = InetAddress.getByName(INET_ADDR);
-
-        // Open a new DatagramSocket, which will be used to send the data.
-        try (DatagramSocket serverSocket = new DatagramSocket()) {
-            String msg = "message";
-
-            // Create a packet that will contain the data
-            // (in the form of bytes) and send it.
-            DatagramPacket msgPacket = new DatagramPacket(msg.getBytes(),
-                    msg.getBytes().length, addr, PORT);
-
-            serverSocket.send(msgPacket);
-            System.out.println("Server sent packet with msg: " + msg);
-
-            // Receiving acknowledgement
-            byte[] buf = new byte[BUF_SIZE];
-            msgPacket = new DatagramPacket(buf, buf.length);
-            serverSocket.setSoTimeout(TIMEOUT);
-
-            serverSocket.receive(msgPacket);
-            String received = new String(msgPacket.getData(), 0, msgPacket.getLength());
-            System.out.println("Received: " + received);
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
