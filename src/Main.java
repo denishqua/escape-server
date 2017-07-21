@@ -20,6 +20,7 @@ public class Main {
 
     final String LEFT_CLICK = "left_click";
     final String RIGHT_CLICK = "right_click";
+    final String DOUBLE_CLICK = "double_click";
 
     final String UP = "up";
     final String DOWN = "down";
@@ -82,7 +83,13 @@ public class Main {
                                         break;
                                     case SHIFT:
                                         capital = true;
-                                        code = KeyEvent.getExtendedKeyCodeForChar(actions[1].charAt(0));
+                                        if(actions.length > 1)
+                                            code = KeyEvent.getExtendedKeyCodeForChar(actions[1].charAt(0));
+                                        else // The user sent us '\shift \\'
+                                        {
+                                            code = KeyEvent.getExtendedKeyCodeForChar('\\');
+                                            i++;
+                                        }
                                         break;
                                     default: {
                                         Point location = MouseInfo.getPointerInfo().getLocation();
@@ -110,6 +117,14 @@ public class Main {
                                                 robot.mousePress(InputEvent.BUTTON1_MASK);
                                                 robot.delay(40);
                                                 robot.mouseRelease(InputEvent.BUTTON1_MASK);
+                                                break;
+                                            case DOUBLE_CLICK:
+                                                robot.mousePress(InputEvent.BUTTON1_MASK);
+                                                robot.mouseRelease(InputEvent.BUTTON1_MASK);
+                                                robot.mousePress(InputEvent.BUTTON1_MASK);
+                                                robot.mouseRelease(InputEvent.BUTTON1_MASK);
+
+                                                robot.mouseMove(x,y);
                                                 break;
                                         }
                                         continue mainLoop;
