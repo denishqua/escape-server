@@ -27,6 +27,9 @@ public class Main {
     final String LEFT = "left";
     final String RIGHT = "right";
 
+    int x;
+    int y;
+
     Robot robot;
 
     DatagramSocket serverSocket;
@@ -92,9 +95,13 @@ public class Main {
                                         }
                                         break;
                                     default: {
-                                        Point location = MouseInfo.getPointerInfo().getLocation();
-                                        int x = location.x;
-                                        int y = location.y;
+                                        PointerInfo info = MouseInfo.getPointerInfo();
+                                        if(info != null) {
+                                            Point location = info.getLocation();
+                                            x = location.x;
+                                            y = location.y;
+                                        }
+
                                         switch (actions[0]) {
                                             case UP:
                                                 robot.mouseMove(x, y - Integer.parseInt(actions[1]));
